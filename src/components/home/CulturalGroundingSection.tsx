@@ -36,15 +36,28 @@ const CulturalGroundingSection = () => {
         }
       );
 
-      // Image parallax on scroll
+      // Image parallax on scroll - slower, more cinematic
       gsap.to(".cultural-image", {
-        yPercent: -15,
+        yPercent: -12,
+        scale: 1.05,
         ease: "none",
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top bottom",
           end: "bottom top",
-          scrub: 1.5
+          scrub: 2.5
+        }
+      });
+
+      // Text container subtle parallax for depth
+      gsap.to(textRef.current, {
+        yPercent: -5,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 3
         }
       });
 

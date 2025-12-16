@@ -102,15 +102,28 @@ const CraftStep = ({
     if (!stepRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Image parallax
+      // Image parallax - slower, more dramatic
       gsap.to(imageRef.current, {
-        yPercent: -20,
+        yPercent: -15,
+        scale: 1.03,
         ease: "none",
         scrollTrigger: {
           trigger: stepRef.current,
           start: "top bottom",
           end: "bottom top",
-          scrub: 1.5
+          scrub: 2.5
+        }
+      });
+
+      // Content subtle parallax for layered depth
+      gsap.to(contentRef.current, {
+        yPercent: -8,
+        ease: "none",
+        scrollTrigger: {
+          trigger: stepRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 3.5
         }
       });
 

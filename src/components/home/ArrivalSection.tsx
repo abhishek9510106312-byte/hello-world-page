@@ -17,16 +17,28 @@ const ArrivalSection = () => {
     if (!sectionRef.current || !contentRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Parallax effect on background
+      // Layered parallax effect on background
       gsap.to(".hero-bg", {
-        yPercent: 30,
-        scale: 1.1,
+        yPercent: 20,
+        scale: 1.08,
         ease: "none",
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom top",
-          scrub: 1
+          scrub: 2
+        }
+      });
+
+      // Secondary overlay parallax for depth
+      gsap.to(".hero-overlay", {
+        yPercent: 10,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.5
         }
       });
 
@@ -97,8 +109,8 @@ const ArrivalSection = () => {
           <source src={HERO_VIDEO_URL} type="video/mp4" />
         </video>
         
-        {/* Cinematic gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/40 via-transparent to-charcoal/60" />
+        {/* Cinematic gradient overlay with parallax */}
+        <div className="hero-overlay absolute inset-0 bg-gradient-to-b from-charcoal/40 via-transparent to-charcoal/60 will-change-transform" />
       </div>
 
       {/* Grain texture */}
