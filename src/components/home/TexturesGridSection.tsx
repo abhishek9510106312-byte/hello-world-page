@@ -132,15 +132,17 @@ const TextureCard = ({
     if (!cardRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Image parallax within card
+      // Image parallax within card - varied speed based on index
+      const parallaxSpeed = index % 2 === 0 ? -8 : -12;
       gsap.to(imageRef.current, {
-        yPercent: -10,
+        yPercent: parallaxSpeed,
+        scale: 1.02,
         ease: "none",
         scrollTrigger: {
           trigger: cardRef.current,
           start: "top bottom",
           end: "bottom top",
-          scrub: 1.5
+          scrub: 2 + (index * 0.3)
         }
       });
 
