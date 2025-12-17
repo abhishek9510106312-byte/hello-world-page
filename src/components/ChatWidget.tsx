@@ -174,7 +174,14 @@ const ChatWidget = () => {
                         : "bg-sand/50 text-charcoal rounded-bl-md"
                     }`}
                   >
-                    <p className="text-sm leading-relaxed">{message.content}</p>
+                    <p 
+                      className="text-sm leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: message.content
+                          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                          .replace(/\n/g, '<br />')
+                      }}
+                    />
                   </div>
                 </motion.div>
               ))}
