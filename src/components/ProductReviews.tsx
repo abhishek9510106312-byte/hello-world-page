@@ -16,6 +16,7 @@ interface Review {
   rating: number;
   comment: string | null;
   created_at: string;
+  updated_at: string;
   profile?: {
     full_name: string | null;
   };
@@ -374,9 +375,16 @@ const ProductReviews = ({ productId }: ProductReviewsProps) => {
                           <p className="font-medium text-foreground">
                             {review.profile?.full_name || "Anonymous"}
                           </p>
-                          <p className="text-xs text-muted-foreground">
-                            {format(new Date(review.created_at), 'MMM d, yyyy')}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-xs text-muted-foreground">
+                              {format(new Date(review.created_at), 'MMM d, yyyy')}
+                            </p>
+                            {review.updated_at !== review.created_at && (
+                              <span className="text-xs text-muted-foreground/70 italic">
+                                (edited {format(new Date(review.updated_at), 'MMM d, yyyy')})
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
