@@ -1,10 +1,10 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import wabiSabiBowl from "@/assets/products/wabi-sabi-bowl.jpg";
-import kintsugiPlatter from "@/assets/products/kintsugi-platter.jpg";
-import rakuPlate from "@/assets/products/raku-dinner-plate.jpg";
-import teapot from "@/assets/products/tokoname-teapot.jpg";
+import organicEdgePlatters from "@/assets/products/organic-edge-platters.jpg";
+import earthToneServingPlates from "@/assets/products/earth-tone-serving-plates.jpg";
+import rusticDuoMugSet from "@/assets/products/rustic-duo-mug-set.jpg";
+import forestGreenTeaSet from "@/assets/products/forest-green-tea-set.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,22 +12,22 @@ const textures = [
   {
     name: "Clay Grain",
     description: "The raw surface speaks of earth",
-    image: wabiSabiBowl,
+    image: organicEdgePlatters,
   },
   {
     name: "Glaze Imperfections",
     description: "Each bubble tells a story",
-    image: kintsugiPlatter,
+    image: earthToneServingPlates,
   },
   {
     name: "Hand Marks",
     description: "The maker's touch remains",
-    image: rakuPlate,
+    image: rusticDuoMugSet,
   },
   {
     name: "Fire Patterns",
     description: "Where flame kissed clay",
-    image: teapot,
+    image: forestGreenTeaSet,
   },
 ];
 
