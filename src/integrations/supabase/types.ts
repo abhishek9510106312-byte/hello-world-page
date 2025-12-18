@@ -151,6 +151,57 @@ export type Database = {
           },
         ]
       }
+      custom_order_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          email: string
+          estimated_delivery_date: string | null
+          estimated_price: number | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          preferred_size: string
+          status: string
+          updated_at: string
+          usage_description: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          email: string
+          estimated_delivery_date?: string | null
+          estimated_price?: number | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          preferred_size?: string
+          status?: string
+          updated_at?: string
+          usage_description: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          email?: string
+          estimated_delivery_date?: string | null
+          estimated_price?: number | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          preferred_size?: string
+          status?: string
+          updated_at?: string
+          usage_description?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string | null

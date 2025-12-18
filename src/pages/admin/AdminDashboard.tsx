@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Package, ShoppingCart, Users, Calendar, LayoutDashboard, LogOut } from 'lucide-react';
+import { Package, ShoppingCart, Users, Calendar, LayoutDashboard, LogOut, Paintbrush } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -8,9 +8,10 @@ import AdminProducts from './AdminProducts';
 import AdminOrders from './AdminOrders';
 import AdminWorkshops from './AdminWorkshops';
 import AdminUsers from './AdminUsers';
+import AdminCustomOrders from './AdminCustomOrders';
 import AdminNotifications from '@/components/admin/AdminNotifications';
 
-type Tab = 'overview' | 'products' | 'orders' | 'workshops' | 'users';
+type Tab = 'overview' | 'products' | 'orders' | 'workshops' | 'users' | 'custom-orders';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
@@ -27,6 +28,7 @@ const AdminDashboard = () => {
     { id: 'products' as Tab, label: 'Products', icon: Package },
     { id: 'orders' as Tab, label: 'Orders', icon: ShoppingCart },
     { id: 'workshops' as Tab, label: 'Workshops', icon: Calendar },
+    { id: 'custom-orders' as Tab, label: 'Custom Orders', icon: Paintbrush },
     { id: 'users' as Tab, label: 'Users', icon: Users },
   ];
 
@@ -74,6 +76,7 @@ const AdminDashboard = () => {
           {activeTab === 'products' && <AdminProducts />}
           {activeTab === 'orders' && <AdminOrders />}
           {activeTab === 'workshops' && <AdminWorkshops />}
+          {activeTab === 'custom-orders' && <AdminCustomOrders />}
           {activeTab === 'users' && <AdminUsers />}
         </div>
       </div>
