@@ -426,17 +426,17 @@ export default function Checkout() {
                       className="space-y-3"
                     >
                       {addresses.map((address) => (
-                        <div
+                        <label
                           key={address.id}
+                          htmlFor={`checkout-addr-${address.id}`}
                           className={`flex items-start space-x-3 p-4 border rounded-lg cursor-pointer transition-colors ${
                             selectedAddressId === address.id 
                               ? 'border-primary bg-primary/5' 
                               : 'border-border hover:border-primary/50'
                           }`}
-                          onClick={() => setSelectedAddressId(address.id)}
                         >
-                          <RadioGroupItem value={address.id} id={address.id} className="mt-1" />
-                          <label htmlFor={address.id} className="flex-1 cursor-pointer">
+                          <RadioGroupItem value={address.id} id={`checkout-addr-${address.id}`} className="mt-1" />
+                          <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <span className="font-medium">{address.label}</span>
                               {address.is_default && (
@@ -447,8 +447,8 @@ export default function Checkout() {
                             <p className="text-sm text-muted-foreground">
                               {formatAddressString(address)}
                             </p>
-                          </label>
-                        </div>
+                          </div>
+                        </label>
                       ))}
                     </RadioGroup>
                   )}
