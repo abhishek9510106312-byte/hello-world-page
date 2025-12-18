@@ -17,6 +17,7 @@ import Auth from "@/pages/Auth";
 import Profile from "@/pages/Profile";
 import Orders from "@/pages/Orders";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import Philosophy from "@/pages/Philosophy";
 import NotFound from "@/pages/NotFound";
 
 const AnimatedRoutes = () => {
@@ -31,6 +32,7 @@ const AnimatedRoutes = () => {
         <Route path="/products/:productId" element={<PageTransition><ProductDetail /></PageTransition>} />
         <Route path="/workshops" element={<PageTransition><Workshops /></PageTransition>} />
         <Route path="/studio" element={<PageTransition><Studio /></PageTransition>} />
+        <Route path="/philosophy" element={<PageTransition><Philosophy /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/cart" element={<PageTransition><Cart /></PageTransition>} />
         <Route path="/checkout" element={
