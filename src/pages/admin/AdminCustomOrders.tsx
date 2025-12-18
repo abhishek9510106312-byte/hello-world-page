@@ -55,14 +55,14 @@ interface CustomOrderRequest {
 }
 
 const statusOptions = [
-  { value: "pending", label: "Pending", bgColor: "bg-amber-100", textColor: "text-amber-700", borderColor: "border-amber-200" },
-  { value: "under_review", label: "Under Review", bgColor: "bg-sky-100", textColor: "text-sky-700", borderColor: "border-sky-200" },
-  { value: "payment_pending", label: "Payment Pending", bgColor: "bg-orange-100", textColor: "text-orange-600", borderColor: "border-orange-200" },
-  { value: "payment_done", label: "Payment Done", bgColor: "bg-emerald-100", textColor: "text-emerald-700", borderColor: "border-emerald-200" },
-  { value: "in_progress", label: "In Progress", bgColor: "bg-violet-100", textColor: "text-violet-700", borderColor: "border-violet-200" },
-  { value: "in_delivery", label: "In Delivery", bgColor: "bg-cyan-100", textColor: "text-cyan-700", borderColor: "border-cyan-200" },
-  { value: "delivered", label: "Delivered", bgColor: "bg-green-100", textColor: "text-green-700", borderColor: "border-green-200" },
-  { value: "rejected", label: "Rejected", bgColor: "bg-rose-100", textColor: "text-rose-600", borderColor: "border-rose-200" },
+  { value: "pending", label: "Pending", gradient: "from-amber-400 to-yellow-500", bg: "bg-amber-50", text: "text-amber-800", dot: "bg-amber-500" },
+  { value: "under_review", label: "Under Review", gradient: "from-blue-400 to-indigo-500", bg: "bg-blue-50", text: "text-blue-800", dot: "bg-blue-500" },
+  { value: "payment_pending", label: "Payment Pending", gradient: "from-orange-400 to-red-400", bg: "bg-orange-50", text: "text-orange-800", dot: "bg-orange-500" },
+  { value: "payment_done", label: "Payment Done", gradient: "from-emerald-400 to-teal-500", bg: "bg-emerald-50", text: "text-emerald-800", dot: "bg-emerald-500" },
+  { value: "in_progress", label: "In Progress", gradient: "from-violet-400 to-purple-500", bg: "bg-violet-50", text: "text-violet-800", dot: "bg-violet-500" },
+  { value: "in_delivery", label: "In Delivery", gradient: "from-cyan-400 to-blue-500", bg: "bg-cyan-50", text: "text-cyan-800", dot: "bg-cyan-500" },
+  { value: "delivered", label: "Delivered", gradient: "from-green-400 to-emerald-500", bg: "bg-green-50", text: "text-green-800", dot: "bg-green-500" },
+  { value: "rejected", label: "Rejected", gradient: "from-rose-400 to-red-500", bg: "bg-rose-50", text: "text-rose-800", dot: "bg-rose-500" },
 ];
 
 const emailTemplates = [
@@ -253,16 +253,12 @@ const AdminCustomOrders = () => {
     setIsDetailOpen(false);
   };
 
-  const getStatusBadge = (status: string, showChevron = false) => {
+  const getStatusBadge = (status: string, isCompact = false) => {
     const option = statusOptions.find((o) => o.value === status);
     return (
-      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${option?.bgColor || "bg-muted"} ${option?.textColor || "text-foreground"} ${option?.borderColor || "border-border"}`}>
-        {option?.label || status}
-        {showChevron && (
-          <svg className="w-3 h-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        )}
+      <span className={`inline-flex items-center gap-2 ${isCompact ? 'px-2.5 py-1' : 'px-3 py-1.5'} rounded-lg ${option?.bg || "bg-muted"} ${option?.text || "text-foreground"} shadow-sm border border-black/5 transition-all duration-200 hover:shadow-md`}>
+        <span className={`w-2 h-2 rounded-full ${option?.dot || "bg-muted-foreground"} animate-pulse`} />
+        <span className="text-xs font-semibold tracking-wide">{option?.label || status}</span>
       </span>
     );
   };
@@ -334,33 +330,36 @@ const AdminCustomOrders = () => {
                       value={request.status}
                       onValueChange={(value) => handleInlineStatusChange(request.id, value)}
                     >
-                      <SelectTrigger className="w-auto min-w-[150px] h-auto border-0 bg-transparent p-0 shadow-none focus:ring-0 [&>svg]:hidden">
+                      <SelectTrigger className="w-auto min-w-[160px] h-auto border-0 bg-transparent p-0 shadow-none focus:ring-0 [&>svg]:ml-1 [&>svg]:h-4 [&>svg]:w-4 [&>svg]:opacity-50">
                         <SelectValue>
                           {getStatusBadge(request.status, true)}
                         </SelectValue>
                       </SelectTrigger>
-                      <SelectContent className="bg-amber-50/95 backdrop-blur-sm border-amber-200 rounded-xl p-1 min-w-[180px]">
-                        {statusOptions.map((option) => {
-                          const isSelected = request.status === option.value;
-                          return (
-                            <SelectItem 
-                              key={option.value} 
-                              value={option.value}
-                              className="rounded-lg px-3 py-2 cursor-pointer focus:bg-amber-100/50 data-[state=checked]:bg-transparent"
-                            >
-                              <div className="flex items-center gap-2">
-                                {isSelected && (
-                                  <svg className="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                )}
-                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${option.bgColor} ${option.textColor} ${option.borderColor}`}>
-                                  {option.label}
-                                </span>
-                              </div>
-                            </SelectItem>
-                          );
-                        })}
+                      <SelectContent className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-xl p-2 min-w-[200px] shadow-2xl">
+                        <div className="space-y-1">
+                          {statusOptions.map((option) => {
+                            const isSelected = request.status === option.value;
+                            return (
+                              <SelectItem 
+                                key={option.value} 
+                                value={option.value}
+                                className={`rounded-lg px-3 py-2.5 cursor-pointer transition-all duration-150 focus:bg-muted/80 ${isSelected ? 'bg-muted' : 'hover:bg-muted/50'}`}
+                              >
+                                <div className="flex items-center gap-3 w-full">
+                                  <span className={`w-2.5 h-2.5 rounded-full bg-gradient-to-br ${option.gradient} shadow-sm`} />
+                                  <span className={`text-sm font-medium ${isSelected ? 'text-foreground' : 'text-muted-foreground'}`}>
+                                    {option.label}
+                                  </span>
+                                  {isSelected && (
+                                    <svg className="w-4 h-4 text-primary ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            );
+                          })}
+                        </div>
                       </SelectContent>
                     </Select>
                   </TableCell>
