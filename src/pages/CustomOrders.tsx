@@ -10,6 +10,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Upload, X, Clock, Palette, Ruler, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 // Gallery images
 import wabiSabiBowl from "@/assets/products/wabi-sabi-bowl.jpg";
@@ -36,6 +38,7 @@ const customizationOptions = [
 ];
 
 const CustomOrders = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -76,13 +79,30 @@ const CustomOrders = () => {
 
     setIsSubmitting(true);
     
-    // Simulate submission - in production, this would send to your backend
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    toast.success("Custom order request submitted! We'll contact you within 48 hours.");
-    setFormData({ name: "", email: "", phone: "", size: "medium", usage: "", notes: "" });
-    setReferenceImages([]);
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase
+        .from("custom_order_requests")
+        .insert({
+          user_id: user?.id || null,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim() || null,
+          preferred_size: formData.size,
+          usage_description: formData.usage.trim(),
+          notes: formData.notes.trim() || null,
+        });
+
+      if (error) throw error;
+      
+      toast.success("Custom order request submitted! We'll contact you within 48 hours.");
+      setFormData({ name: "", email: "", phone: "", size: "medium", usage: "", notes: "" });
+      setReferenceImages([]);
+    } catch (error) {
+      console.error("Error submitting request:", error);
+      toast.error("Failed to submit request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

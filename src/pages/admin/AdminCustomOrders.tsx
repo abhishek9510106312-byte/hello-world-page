@@ -1,0 +1,410 @@
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { Eye, Trash2, Mail, Phone, Calendar, Ruler, FileText, Loader2 } from "lucide-react";
+
+interface CustomOrderRequest {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  preferred_size: string;
+  usage_description: string;
+  notes: string | null;
+  status: string;
+  admin_notes: string | null;
+  estimated_price: number | null;
+  estimated_delivery_date: string | null;
+  created_at: string;
+}
+
+const statusOptions = [
+  { value: "pending", label: "Pending", color: "bg-yellow-500/20 text-yellow-700" },
+  { value: "reviewing", label: "Reviewing", color: "bg-blue-500/20 text-blue-700" },
+  { value: "quoted", label: "Quoted", color: "bg-purple-500/20 text-purple-700" },
+  { value: "approved", label: "Approved", color: "bg-green-500/20 text-green-700" },
+  { value: "in_progress", label: "In Progress", color: "bg-orange-500/20 text-orange-700" },
+  { value: "completed", label: "Completed", color: "bg-emerald-500/20 text-emerald-700" },
+  { value: "rejected", label: "Rejected", color: "bg-red-500/20 text-red-700" },
+];
+
+const AdminCustomOrders = () => {
+  const queryClient = useQueryClient();
+  const [selectedRequest, setSelectedRequest] = useState<CustomOrderRequest | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [editData, setEditData] = useState({
+    status: "",
+    admin_notes: "",
+    estimated_price: "",
+    estimated_delivery_date: "",
+  });
+
+  const { data: requests, isLoading } = useQuery({
+    queryKey: ["custom-order-requests"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("custom_order_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as CustomOrderRequest[];
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (updates: Partial<CustomOrderRequest> & { id: string }) => {
+      const { id, ...data } = updates;
+      const { error } = await supabase
+        .from("custom_order_requests")
+        .update(data)
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["custom-order-requests"] });
+      toast.success("Request updated successfully");
+      setIsDetailOpen(false);
+    },
+    onError: () => {
+      toast.error("Failed to update request");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("custom_order_requests")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["custom-order-requests"] });
+      toast.success("Request deleted");
+    },
+    onError: () => {
+      toast.error("Failed to delete request");
+    },
+  });
+
+  const openDetail = (request: CustomOrderRequest) => {
+    setSelectedRequest(request);
+    setEditData({
+      status: request.status,
+      admin_notes: request.admin_notes || "",
+      estimated_price: request.estimated_price?.toString() || "",
+      estimated_delivery_date: request.estimated_delivery_date || "",
+    });
+    setIsDetailOpen(true);
+  };
+
+  const handleUpdate = () => {
+    if (!selectedRequest) return;
+
+    updateMutation.mutate({
+      id: selectedRequest.id,
+      status: editData.status,
+      admin_notes: editData.admin_notes || null,
+      estimated_price: editData.estimated_price ? parseFloat(editData.estimated_price) : null,
+      estimated_delivery_date: editData.estimated_delivery_date || null,
+    });
+  };
+
+  const getStatusBadge = (status: string) => {
+    const option = statusOptions.find((o) => o.value === status);
+    return (
+      <Badge className={`${option?.color || "bg-muted"} border-0`}>
+        {option?.label || status}
+      </Badge>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-serif text-2xl text-foreground">Custom Order Requests</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Manage bespoke pottery requests from customers
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: "Total Requests", value: requests?.length || 0 },
+          { label: "Pending", value: requests?.filter((r) => r.status === "pending").length || 0 },
+          { label: "In Progress", value: requests?.filter((r) => r.status === "in_progress").length || 0 },
+          { label: "Completed", value: requests?.filter((r) => r.status === "completed").length || 0 },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-card p-4 rounded-lg border border-border">
+            <p className="text-sm text-muted-foreground">{stat.label}</p>
+            <p className="text-2xl font-serif text-foreground">{stat.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Table */}
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Customer</TableHead>
+              <TableHead>Size</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Est. Price</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {requests?.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  No custom order requests yet
+                </TableCell>
+              </TableRow>
+            ) : (
+              requests?.map((request) => (
+                <TableRow key={request.id}>
+                  <TableCell>
+                    <div>
+                      <p className="font-medium text-foreground">{request.name}</p>
+                      <p className="text-sm text-muted-foreground">{request.email}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="capitalize">{request.preferred_size}</TableCell>
+                  <TableCell>{getStatusBadge(request.status)}</TableCell>
+                  <TableCell>
+                    {request.estimated_price
+                      ? `₹${request.estimated_price.toLocaleString()}`
+                      : "—"}
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(request.created_at), "MMM d, yyyy")}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openDetail(request)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          if (confirm("Delete this request?")) {
+                            deleteMutation.mutate(request.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Detail Dialog */}
+      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-xl">
+              Custom Order Request Details
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedRequest && (
+            <div className="space-y-6">
+              {/* Customer Info */}
+              <div className="bg-muted/50 p-4 rounded-lg space-y-3">
+                <h3 className="font-medium text-foreground">Customer Information</h3>
+                <div className="grid sm:grid-cols-2 gap-3 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground">Name:</span>
+                    <span className="text-foreground">{selectedRequest.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={`mailto:${selectedRequest.email}`}
+                      className="text-primary hover:underline"
+                    >
+                      {selectedRequest.email}
+                    </a>
+                  </div>
+                  {selectedRequest.phone && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-foreground">{selectedRequest.phone}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-foreground">
+                      {format(new Date(selectedRequest.created_at), "PPP")}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Request Details */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Ruler className="h-4 w-4 text-primary" />
+                  <span className="text-sm text-muted-foreground">Preferred Size:</span>
+                  <span className="capitalize font-medium">{selectedRequest.preferred_size}</span>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <span className="text-sm text-muted-foreground">Intended Usage:</span>
+                  </div>
+                  <p className="text-sm text-foreground bg-muted/30 p-3 rounded-lg">
+                    {selectedRequest.usage_description}
+                  </p>
+                </div>
+
+                {selectedRequest.notes && (
+                  <div>
+                    <span className="text-sm text-muted-foreground">Additional Notes:</span>
+                    <p className="text-sm text-foreground bg-muted/30 p-3 rounded-lg mt-2">
+                      {selectedRequest.notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Admin Controls */}
+              <div className="border-t border-border pt-6 space-y-4">
+                <h3 className="font-medium text-foreground">Admin Controls</h3>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <Select
+                      value={editData.status}
+                      onValueChange={(value) =>
+                        setEditData((prev) => ({ ...prev, status: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {statusOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Estimated Price (₹)</Label>
+                    <Input
+                      type="number"
+                      value={editData.estimated_price}
+                      onChange={(e) =>
+                        setEditData((prev) => ({ ...prev, estimated_price: e.target.value }))
+                      }
+                      placeholder="Enter estimated price"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Estimated Delivery Date</Label>
+                  <Input
+                    type="date"
+                    value={editData.estimated_delivery_date}
+                    onChange={(e) =>
+                      setEditData((prev) => ({
+                        ...prev,
+                        estimated_delivery_date: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Admin Notes</Label>
+                  <Textarea
+                    value={editData.admin_notes}
+                    onChange={(e) =>
+                      setEditData((prev) => ({ ...prev, admin_notes: e.target.value }))
+                    }
+                    placeholder="Internal notes about this request..."
+                    rows={3}
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    variant="terracotta"
+                    onClick={handleUpdate}
+                    disabled={updateMutation.isPending}
+                  >
+                    {updateMutation.isPending ? "Saving..." : "Save Changes"}
+                  </Button>
+                  <Button variant="outline" onClick={() => setIsDetailOpen(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default AdminCustomOrders;
