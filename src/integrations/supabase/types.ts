@@ -156,6 +156,7 @@ export type Database = {
           admin_notes: string | null
           created_at: string
           email: string
+          emails_sent: Json | null
           estimated_delivery_date: string | null
           estimated_price: number | null
           id: string
@@ -174,6 +175,7 @@ export type Database = {
           admin_notes?: string | null
           created_at?: string
           email: string
+          emails_sent?: Json | null
           estimated_delivery_date?: string | null
           estimated_price?: number | null
           id?: string
@@ -192,6 +194,7 @@ export type Database = {
           admin_notes?: string | null
           created_at?: string
           email?: string
+          emails_sent?: Json | null
           estimated_delivery_date?: string | null
           estimated_price?: number | null
           id?: string
