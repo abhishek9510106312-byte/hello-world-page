@@ -29,7 +29,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { Eye, Trash2, Mail, Phone, Calendar, Ruler, FileText, Loader2 } from "lucide-react";
+import { Eye, Trash2, Mail, Phone, Calendar, Ruler, FileText, Loader2, MapPin } from "lucide-react";
 
 interface CustomOrderRequest {
   id: string;
@@ -39,6 +39,7 @@ interface CustomOrderRequest {
   preferred_size: string;
   usage_description: string;
   notes: string | null;
+  shipping_address: string | null;
   status: string;
   admin_notes: string | null;
   estimated_price: number | null;
@@ -310,6 +311,18 @@ const AdminCustomOrders = () => {
                     {selectedRequest.usage_description}
                   </p>
                 </div>
+
+                {selectedRequest.shipping_address && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="text-sm text-muted-foreground">Delivery Address:</span>
+                    </div>
+                    <p className="text-sm text-foreground bg-muted/30 p-3 rounded-lg">
+                      {selectedRequest.shipping_address}
+                    </p>
+                  </div>
+                )}
 
                 {selectedRequest.notes && (
                   <div>
