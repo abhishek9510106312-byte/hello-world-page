@@ -31,6 +31,11 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { Eye, Trash2, Mail, Phone, Calendar, Ruler, FileText, Loader2, MapPin, Image, X, Send, CreditCard, Truck, Package } from "lucide-react";
 
+interface EmailSent {
+  type: string;
+  sent_at: string;
+}
+
 interface CustomOrderRequest {
   id: string;
   name: string;
@@ -46,6 +51,7 @@ interface CustomOrderRequest {
   estimated_price: number | null;
   estimated_delivery_date: string | null;
   created_at: string;
+  emails_sent: EmailSent[] | null;
 }
 
 const statusOptions = [
@@ -90,12 +96,12 @@ const AdminCustomOrders = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as CustomOrderRequest[];
+      return data as unknown as CustomOrderRequest[];
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (updates: Partial<CustomOrderRequest> & { id: string }) => {
+    mutationFn: async (updates: Partial<Omit<CustomOrderRequest, 'emails_sent'>> & { id: string }) => {
       const { id, ...data } = updates;
       const { error } = await supabase
         .from("custom_order_requests")
@@ -504,31 +510,65 @@ const AdminCustomOrders = () => {
                   <Send className="h-4 w-4" />
                   Send Email to Customer
                 </h3>
+
+                {/* Show previously sent emails */}
+                {selectedRequest.emails_sent && selectedRequest.emails_sent.length > 0 && (
+                  <div className="bg-muted/50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-foreground mb-2">Previously Sent Emails:</p>
+                    <div className="space-y-1">
+                      {selectedRequest.emails_sent.map((email, index) => {
+                        const template = emailTemplates.find(t => t.value === email.type);
+                        return (
+                          <div key={index} className="flex items-center justify-between text-xs">
+                            <span className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">
+                                {template?.label || email.type}
+                              </Badge>
+                            </span>
+                            <span className="text-muted-foreground">
+                              {format(new Date(email.sent_at), "MMM d, yyyy 'at' h:mm a")}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 
                 <div className="grid gap-2">
-                  {emailTemplates.map((template) => (
-                    <div
-                      key={template.value}
-                      className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                        emailType === template.value
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                      onClick={() => setEmailType(template.value)}
-                    >
-                      <template.icon className="h-5 w-5 text-primary" />
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{template.label}</p>
-                        <p className="text-xs text-muted-foreground">{template.description}</p>
+                  {emailTemplates.map((template) => {
+                    const alreadySent = selectedRequest.emails_sent?.some(e => e.type === template.value);
+                    return (
+                      <div
+                        key={template.value}
+                        className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                          emailType === template.value
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                        onClick={() => setEmailType(template.value)}
+                      >
+                        <template.icon className="h-5 w-5 text-primary" />
+                        <div className="flex-1">
+                          <p className="font-medium text-sm flex items-center gap-2">
+                            {template.label}
+                            {alreadySent && (
+                              <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-700">
+                                Sent
+                              </Badge>
+                            )}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{template.description}</p>
+                        </div>
+                        <input
+                          type="radio"
+                          checked={emailType === template.value}
+                          onChange={() => setEmailType(template.value)}
+                          className="accent-primary"
+                        />
                       </div>
-                      <input
-                        type="radio"
-                        checked={emailType === template.value}
-                        onChange={() => setEmailType(template.value)}
-                        className="accent-primary"
-                      />
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {emailType === "custom" && (
