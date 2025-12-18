@@ -163,6 +163,7 @@ export type Database = {
           notes: string | null
           phone: string | null
           preferred_size: string
+          shipping_address: string | null
           status: string
           updated_at: string
           usage_description: string
@@ -179,6 +180,7 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           preferred_size?: string
+          shipping_address?: string | null
           status?: string
           updated_at?: string
           usage_description: string
@@ -195,6 +197,7 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           preferred_size?: string
+          shipping_address?: string | null
           status?: string
           updated_at?: string
           usage_description?: string
