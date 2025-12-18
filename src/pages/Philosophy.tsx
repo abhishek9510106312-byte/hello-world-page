@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 import rawClayImage from "@/assets/studio/raw-clay-texture.jpg";
 import potterToolsImage from "@/assets/studio/pottery-tools.jpg";
 import glazingImage from "@/assets/studio/pottery-glazing.jpg";
-import wabiSabiBowl from "@/assets/products/wabi-sabi-bowl.jpg";
+import organicEdgePlatters from "@/assets/products/organic-edge-platters.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -271,8 +271,8 @@ const Philosophy = () => {
               <div className="relative">
                 <div className="aspect-square overflow-hidden rounded-sm">
                   <img
-                    src={wabiSabiBowl}
-                    alt="Wabi-sabi bowl"
+                    src={organicEdgePlatters}
+                    alt="Organic edge platters"
                     className="parallax-img w-full h-full object-cover scale-110"
                   />
                 </div>
