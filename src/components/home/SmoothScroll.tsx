@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, ReactNode } from "react";
 import Lenis from "lenis";
 import { gsap } from "gsap";
