@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/useAuth';
 import { useAddresses, Address, AddressFormData } from '@/hooks/useAddresses';
 import AddressForm from '@/components/AddressForm';
@@ -17,10 +18,11 @@ import { useNavigate, Link } from 'react-router-dom';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const { addresses, loading: addressesLoading, addAddress, updateAddress, deleteAddress, setDefaultAddress } = useAddresses();
   
   const [profile, setProfile] = useState<{ full_name: string; phone: string } | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({ full_name: '', phone: '' });
   const [savingProfile, setSavingProfile] = useState(false);
@@ -32,12 +34,15 @@ export default function Profile() {
   useEffect(() => {
     if (user) {
       fetchProfile();
+    } else if (!authLoading) {
+      setProfileLoading(false);
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchProfile = async () => {
     if (!user) return;
     
+    setProfileLoading(true);
     const { data, error } = await supabase
       .from('profiles')
       .select('full_name, phone')
@@ -48,6 +53,7 @@ export default function Profile() {
       setProfile(data);
       setProfileForm({ full_name: data.full_name || '', phone: data.phone || '' });
     }
+    setProfileLoading(false);
   };
 
   const handleSaveProfile = async () => {
@@ -149,14 +155,16 @@ export default function Profile() {
           </div>
 
           <div className="container mx-auto px-4 max-w-5xl relative">
-            <motion.div
+          <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
               className="text-center"
             >
               {/* Avatar */}
-              {avatarUrl ? (
+              {authLoading || profileLoading ? (
+                <Skeleton className="w-24 h-24 rounded-full mx-auto mb-6" />
+              ) : avatarUrl ? (
                 <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/30 mb-6 mx-auto">
                   <img 
                     src={avatarUrl} 
@@ -173,12 +181,21 @@ export default function Profile() {
                 </div>
               )}
 
-              <h1 className="font-serif text-4xl md:text-5xl text-foreground mb-3">
-                {profile?.full_name || 'Welcome'}
-              </h1>
-              <p className="text-muted-foreground font-sans text-lg mb-8">
-                {user?.email}
-              </p>
+              {authLoading || profileLoading ? (
+                <>
+                  <Skeleton className="h-12 w-64 mx-auto mb-3" />
+                  <Skeleton className="h-6 w-48 mx-auto mb-8" />
+                </>
+              ) : (
+                <>
+                  <h1 className="font-serif text-4xl md:text-5xl text-foreground mb-3">
+                    {profile?.full_name || 'Welcome'}
+                  </h1>
+                  <p className="text-muted-foreground font-sans text-lg mb-8">
+                    {user?.email}
+                  </p>
+                </>
+              )}
 
               <Button 
                 variant="outline" 
@@ -285,6 +302,18 @@ export default function Profile() {
                           Cancel
                         </Button>
                       </div>
+                    </div>
+                  ) : profileLoading ? (
+                    <div className="space-y-6">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-background/50">
+                          <Skeleton className="w-5 h-5 rounded" />
+                          <div className="flex-1">
+                            <Skeleton className="h-3 w-12 mb-2" />
+                            <Skeleton className="h-5 w-32" />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="space-y-6">
