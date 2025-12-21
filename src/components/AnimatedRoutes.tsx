@@ -20,8 +20,10 @@ import OrderConfirmation from "@/pages/OrderConfirmation";
 import Auth from "@/pages/Auth";
 import Profile from "@/pages/Profile";
 import Orders from "@/pages/Orders";
+import Wishlist from "@/pages/Wishlist";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import Philosophy from "@/pages/Philosophy";
+import Corporate from "@/pages/Corporate";
 import NotFound from "@/pages/NotFound";
 
 const AnimatedRoutes = () => {
@@ -40,7 +42,9 @@ const AnimatedRoutes = () => {
         <Route path="/studio" element={<PageTransition><Studio /></PageTransition>} />
         <Route path="/philosophy" element={<PageTransition><Philosophy /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/corporate" element={<PageTransition><Corporate /></PageTransition>} />
         <Route path="/cart" element={<PageTransition><Cart /></PageTransition>} />
+        <Route path="/wishlist" element={<PageTransition><Wishlist /></PageTransition>} />
         <Route path="/checkout" element={
           <ProtectedRoute>
             <PageTransition><Checkout /></PageTransition>

@@ -48,13 +48,24 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Visit */}
-          <div>
-            <h4 className="text-xs tracking-[0.2em] uppercase text-footer-muted mb-6">Visit</h4>
-            <div className="space-y-2 font-sans text-sm text-footer-text/70">
-              <p>Piplod, Surat, Gujarat</p>
-              <p>Tue - Sun: 10am - 6pm</p>
-              <p className="text-warm-rust text-xs tracking-wider uppercase pt-2">By Appointment</p>
+          {/* Business & Visit */}
+          <div className="space-y-8">
+            <div>
+              <h4 className="text-xs tracking-[0.2em] uppercase text-footer-muted mb-4">Business</h4>
+              <Link 
+                to="/corporate" 
+                className="font-sans text-sm text-footer-text/70 hover:text-footer-text transition-colors duration-300"
+              >
+                Corporate & Collaborations
+              </Link>
+            </div>
+            <div>
+              <h4 className="text-xs tracking-[0.2em] uppercase text-footer-muted mb-4">Visit</h4>
+              <div className="space-y-2 font-sans text-sm text-footer-text/70">
+                <p>Piplod, Surat, Gujarat</p>
+                <p>Tue - Sun: 10am - 6pm</p>
+                <p className="text-warm-rust text-xs tracking-wider uppercase pt-2">By Appointment</p>
+              </div>
             </div>
           </div>
         </div>

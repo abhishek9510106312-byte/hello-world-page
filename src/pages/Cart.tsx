@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
@@ -7,19 +8,24 @@ import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
-import { toast } from 'sonner';
+import { AuthModal } from '@/components/AuthModal';
 
 export default function Cart() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items, loading, updateQuantity, removeFromCart, getTotal, getShippingCost, itemCount } = useCart();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   
   const handleCheckout = () => {
     if (!user) {
-      toast.info('Please sign in to continue with checkout');
-      navigate('/auth?redirect=/checkout');
+      setShowAuthModal(true);
       return;
     }
+    navigate('/checkout');
+  };
+
+  const handleAuthSuccess = () => {
+    // Navigate to checkout after successful auth
     navigate('/checkout');
   };
   
@@ -184,6 +190,14 @@ export default function Cart() {
       </main>
 
       <Footer />
+
+      <AuthModal 
+        open={showAuthModal} 
+        onOpenChange={setShowAuthModal}
+        onSuccess={handleAuthSuccess}
+        title="Sign in to checkout"
+        description="Create an account or sign in to complete your purchase"
+      />
     </>
   );
 }

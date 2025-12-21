@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Instagram, Mail, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -233,6 +234,21 @@ const Contact = () => {
                       We typically respond within 24-48 hours. For urgent 
                       inquiries, please reach out via Instagram DM.
                     </p>
+                  </div>
+
+                  <div className="bg-card p-8 rounded-sm border border-border">
+                    <h4 className="font-serif text-lg text-foreground mb-3">
+                      For Business Inquiries
+                    </h4>
+                    <p className="font-sans text-sm text-muted-foreground mb-4">
+                      Interested in corporate gifting, team workshops, or brand collaborations?
+                    </p>
+                    <Link 
+                      to="/corporate" 
+                      className="font-sans text-sm text-terracotta hover:text-primary transition-colors"
+                    >
+                      Visit our Corporate page →
+                    </Link>
                   </div>
                 </motion.div>
               </div>

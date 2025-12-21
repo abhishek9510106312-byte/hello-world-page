@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { CartProvider } from "@/hooks/useCart";
 import { AuthProvider } from "@/hooks/useAuth";
+import { WishlistProvider } from "@/hooks/useWishlist";
 import AnimatedRoutes from "@/components/AnimatedRoutes";
 import ScrollRestoration from "@/components/ScrollRestoration";
 
@@ -17,12 +18,14 @@ const App = () => (
       <TooltipProvider>
         <AuthProvider>
           <CartProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <ScrollRestoration />
-              <AnimatedRoutes />
-            </BrowserRouter>
+            <WishlistProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <ScrollRestoration />
+                <AnimatedRoutes />
+              </BrowserRouter>
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </TooltipProvider>

@@ -151,6 +151,54 @@ export type Database = {
           },
         ]
       }
+      corporate_inquiries: {
+        Row: {
+          admin_notes: string | null
+          company_name: string
+          contact_person: string
+          created_at: string
+          description: string
+          email: string
+          id: string
+          phone: string | null
+          request_type: string
+          scale: string | null
+          status: string
+          timeline: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          company_name: string
+          contact_person: string
+          created_at?: string
+          description: string
+          email: string
+          id?: string
+          phone?: string | null
+          request_type: string
+          scale?: string | null
+          status?: string
+          timeline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          company_name?: string
+          contact_person?: string
+          created_at?: string
+          description?: string
+          email?: string
+          id?: string
+          phone?: string | null
+          request_type?: string
+          scale?: string | null
+          status?: string
+          timeline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custom_order_requests: {
         Row: {
           admin_notes: string | null

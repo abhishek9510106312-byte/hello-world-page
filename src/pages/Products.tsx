@@ -12,6 +12,7 @@ import { ShoppingBag, Loader2 } from "lucide-react";
 import { ProductGridSkeleton } from "@/components/skeletons/ProductCardSkeleton";
 import ProductSearch from "@/components/ProductSearch";
 import ProductFilters from "@/components/ProductFilters";
+import { WishlistButton } from "@/components/WishlistButton";
 
 // Product images
 import cuppedHandsSculpture from "@/assets/products/cupped-hands-sculpture.jpg";
@@ -164,9 +165,18 @@ const Products = () => {
     return result;
   }, [products, activeCategory, searchQuery, priceRange, sortBy]);
 
-  const handleAddToCart = async (productId: string) => {
-    setAddingToCart(productId);
-    await addToCart({ productId, itemType: 'product' });
+  const handleAddToCart = async (product: Product) => {
+    setAddingToCart(product.id);
+    await addToCart({ 
+      productId: product.id, 
+      itemType: 'product',
+      product: {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image_url: productImages[product.name] || product.image_url || undefined,
+      }
+    });
     setAddingToCart(null);
   };
 
@@ -320,6 +330,18 @@ const Products = () => {
                         {/* Image container - clickable */}
                         <Link to={`/products/${product.id}`} className="block">
                           <div className="aspect-square bg-gradient-to-br from-secondary via-muted to-card relative overflow-hidden cursor-pointer">
+                            {/* Wishlist button */}
+                            <WishlistButton 
+                              product={{
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                image_url: productImages[product.name] || product.image_url || undefined,
+                                category: product.category,
+                              }}
+                              variant="overlay"
+                              size="sm"
+                            />
                             {productImages[product.name] || product.image_url ? (
                               <motion.img 
                                 src={productImages[product.name] || product.image_url || ''} 
@@ -342,14 +364,14 @@ const Products = () => {
                               className="absolute inset-x-0 bottom-0 p-4 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out z-10"
                               onClick={(e) => e.preventDefault()}
                             >
-                              <Button 
+                                <Button 
                                 size="sm" 
                                 variant="terracotta"
                                 className="w-full backdrop-blur-sm"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  handleAddToCart(product.id);
+                                  handleAddToCart(product);
                                 }}
                                 disabled={addingToCart === product.id}
                               >

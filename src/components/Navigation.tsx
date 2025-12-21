@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, LogOut, Shield, Package, UserCircle } from "lucide-react";
+import { Menu, X, User, LogOut, Shield, Package, UserCircle, Heart } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CartButton } from "@/components/CartButton";
+import { WishlistNavButton } from "@/components/WishlistNavButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
@@ -126,7 +127,8 @@ const Navigation = () => {
               ))}
             </ul>
             
-            <div className="flex items-center gap-4 ml-4 border-l border-border pl-6">
+            <div className="flex items-center gap-2 ml-4 border-l border-border pl-6">
+              <WishlistNavButton />
               <CartButton />
               {!loading && (
                 user ? (
@@ -185,7 +187,8 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center gap-4 lg:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
+            <WishlistNavButton />
             <CartButton />
             {!loading && (
               user ? (

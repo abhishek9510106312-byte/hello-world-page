@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Package, ShoppingCart, Users, Calendar, LayoutDashboard, LogOut, Paintbrush, Sparkles } from 'lucide-react';
+import { Package, ShoppingCart, Users, Calendar, LayoutDashboard, LogOut, Paintbrush, Sparkles, Building2, TrendingUp } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -10,9 +12,10 @@ import AdminWorkshops from './AdminWorkshops';
 import AdminUsers from './AdminUsers';
 import AdminCustomOrders from './AdminCustomOrders';
 import AdminExperiences from './AdminExperiences';
+import AdminCorporateInquiries from './AdminCorporateInquiries';
 import AdminNotifications from '@/components/admin/AdminNotifications';
 
-type Tab = 'overview' | 'products' | 'orders' | 'workshops' | 'users' | 'custom-orders' | 'experiences';
+type Tab = 'overview' | 'products' | 'orders' | 'workshops' | 'users' | 'custom-orders' | 'experiences' | 'corporate';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
@@ -31,6 +34,7 @@ const AdminDashboard = () => {
     { id: 'workshops' as Tab, label: 'Workshops', icon: Calendar },
     { id: 'experiences' as Tab, label: 'Experiences', icon: Sparkles },
     { id: 'custom-orders' as Tab, label: 'Custom Orders', icon: Paintbrush },
+    { id: 'corporate' as Tab, label: 'Corporate', icon: Building2 },
     { id: 'users' as Tab, label: 'Users', icon: Users },
   ];
 
@@ -80,6 +84,7 @@ const AdminDashboard = () => {
           {activeTab === 'workshops' && <AdminWorkshops />}
           {activeTab === 'experiences' && <AdminExperiences />}
           {activeTab === 'custom-orders' && <AdminCustomOrders />}
+          {activeTab === 'corporate' && <AdminCorporateInquiries />}
           {activeTab === 'users' && <AdminUsers />}
         </div>
       </div>
@@ -88,29 +93,70 @@ const AdminDashboard = () => {
 };
 
 const OverviewTab = () => {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['admin-stats'],
+    queryFn: async () => {
+      const [productsRes, ordersRes, workshopsRes, corporateRes, usersRes] = await Promise.all([
+        supabase.from('products').select('id', { count: 'exact', head: true }),
+        supabase.from('orders').select('id', { count: 'exact', head: true }),
+        supabase.from('workshops').select('id', { count: 'exact', head: true }),
+        supabase.from('corporate_inquiries').select('id', { count: 'exact', head: true }),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
+      ]);
+      return {
+        products: productsRes.count || 0,
+        orders: ordersRes.count || 0,
+        workshops: workshopsRes.count || 0,
+        corporate: corporateRes.count || 0,
+        users: usersRes.count || 0,
+      };
+    },
+  });
+
   return (
     <div className="space-y-6">
       <h2 className="font-serif text-xl">Welcome to Admin Dashboard</h2>
       <p className="text-muted-foreground">
         Use the tabs above to manage products, orders, workshops, and users.
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Products" icon={Package} />
-        <StatCard title="Orders" icon={ShoppingCart} />
-        <StatCard title="Workshops" icon={Calendar} />
-        <StatCard title="Users" icon={Users} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <StatCard title="Products" icon={Package} count={stats?.products} isLoading={isLoading} color="text-blue-500" />
+        <StatCard title="Orders" icon={ShoppingCart} count={stats?.orders} isLoading={isLoading} color="text-green-500" />
+        <StatCard title="Workshops" icon={Calendar} count={stats?.workshops} isLoading={isLoading} color="text-purple-500" />
+        <StatCard title="Corporate" icon={Building2} count={stats?.corporate} isLoading={isLoading} color="text-orange-500" />
+        <StatCard title="Users" icon={Users} count={stats?.users} isLoading={isLoading} color="text-pink-500" />
       </div>
     </div>
   );
 };
 
-const StatCard = ({ title, icon: Icon }: { title: string; icon: React.ComponentType<{ className?: string }> }) => (
-  <div className="bg-muted/50 rounded-lg p-6 border border-border">
-    <div className="flex items-center gap-3 mb-2">
-      <Icon className="h-5 w-5 text-primary" />
-      <span className="font-medium">{title}</span>
+const StatCard = ({ 
+  title, 
+  icon: Icon, 
+  count, 
+  isLoading, 
+  color 
+}: { 
+  title: string; 
+  icon: React.ComponentType<{ className?: string }>; 
+  count?: number; 
+  isLoading: boolean;
+  color: string;
+}) => (
+  <div className="bg-background rounded-lg p-6 border border-border shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex items-center gap-3 mb-3">
+      <div className={`p-2 rounded-lg bg-muted ${color}`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <span className="font-medium text-muted-foreground">{title}</span>
     </div>
-    <p className="text-2xl font-serif text-primary">—</p>
+    <p className="text-3xl font-serif text-primary">
+      {isLoading ? (
+        <span className="animate-pulse">...</span>
+      ) : (
+        count?.toLocaleString() ?? '0'
+      )}
+    </p>
   </div>
 );
 

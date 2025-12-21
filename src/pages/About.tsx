@@ -2,6 +2,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
 import founderImage from "@/assets/founder-shivangi.jpg";
 
 const About = () => {
@@ -187,6 +188,28 @@ const About = () => {
                   </motion.div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          {/* Corporate CTA */}
+          <section className="py-16 bg-background">
+            <div className="container px-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-center max-w-xl mx-auto"
+              >
+                <p className="font-sans text-muted-foreground mb-4">
+                  We also work with teams and brands on custom projects.
+                </p>
+                <Link 
+                  to="/corporate" 
+                  className="font-sans text-sm text-primary hover:text-terracotta transition-colors"
+                >
+                  Corporate & Collaborations →
+                </Link>
+              </motion.div>
             </div>
           </section>
         </main>
