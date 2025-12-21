@@ -6,6 +6,7 @@ import { motion, useInView } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { MapPin, Clock, Calendar, Instagram, Mail, ExternalLink, Shield, Camera, Users, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import VirtualTourGallery from "@/components/studio/VirtualTourGallery";
 
 // Studio images
 import studioInterior from "@/assets/studio/studio-interior.jpg";
@@ -13,7 +14,6 @@ import kilnImage from "@/assets/studio/kiln.jpg";
 import potteryTools from "@/assets/studio/pottery-tools.jpg";
 import potteryDrying from "@/assets/studio/pottery-drying.jpg";
 import rawClayTexture from "@/assets/studio/raw-clay-texture.jpg";
-
 const Studio = () => {
   const heroRef = useRef(null);
   const storyRef = useRef(null);
@@ -158,6 +158,9 @@ const Studio = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-deep-clay/40 to-transparent" />
             </motion.div>
           </section>
+
+          {/* Virtual Tour Gallery */}
+          <VirtualTourGallery />
 
           {/* B. Visiting Information & C. Location */}
           <section className="py-20 md:py-28 bg-background">
