@@ -562,6 +562,54 @@ export type Database = {
         }
         Relationships: []
       }
+      video_testimonials: {
+        Row: {
+          created_at: string
+          customer_name: string | null
+          description: string | null
+          duration_seconds: number | null
+          experience_type: string | null
+          id: string
+          is_approved: boolean | null
+          is_featured: boolean | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name?: string | null
+          description?: string | null
+          duration_seconds?: number | null
+          experience_type?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string | null
+          description?: string | null
+          duration_seconds?: number | null
+          experience_type?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          video_url?: string
+        }
+        Relationships: []
+      }
       workshops: {
         Row: {
           created_at: string | null

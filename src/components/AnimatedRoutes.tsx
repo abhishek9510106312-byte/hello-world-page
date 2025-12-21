@@ -24,6 +24,7 @@ import Wishlist from "@/pages/Wishlist";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import Philosophy from "@/pages/Philosophy";
 import Corporate from "@/pages/Corporate";
+import Media from "@/pages/Media";
 import NotFound from "@/pages/NotFound";
 
 const AnimatedRoutes = () => {
@@ -43,6 +44,7 @@ const AnimatedRoutes = () => {
         <Route path="/philosophy" element={<PageTransition><Philosophy /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/corporate" element={<PageTransition><Corporate /></PageTransition>} />
+        <Route path="/media" element={<PageTransition><Media /></PageTransition>} />
         <Route path="/cart" element={<PageTransition><Cart /></PageTransition>} />
         <Route path="/wishlist" element={<PageTransition><Wishlist /></PageTransition>} />
         <Route path="/checkout" element={

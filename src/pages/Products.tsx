@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
@@ -13,6 +13,7 @@ import { ProductGridSkeleton } from "@/components/skeletons/ProductCardSkeleton"
 import ProductSearch from "@/components/ProductSearch";
 import ProductFilters from "@/components/ProductFilters";
 import { WishlistButton } from "@/components/WishlistButton";
+import CachedProductImage from "@/components/CachedProductImage";
 
 // Product images
 import cuppedHandsSculpture from "@/assets/products/cupped-hands-sculpture.jpg";
@@ -80,7 +81,25 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
+  const [isSearchInHeader, setIsSearchInHeader] = useState(false);
+  const heroSearchRef = useRef<HTMLDivElement>(null);
   const { addToCart } = useCart();
+
+  // Track when hero search scrolls out of view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSearchInHeader(!entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: "-80px 0px 0px 0px" }
+    );
+
+    if (heroSearchRef.current) {
+      observer.observe(heroSearchRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   // Calculate min/max prices from products
   const { minPrice, maxPrice } = useMemo(() => {
@@ -213,10 +232,12 @@ const Products = () => {
                     Each piece is wheel-thrown by hand and fired in our studio. 
                     All items are food-safe, microwave-safe, and dishwasher-safe.
                   </p>
-                  <ProductSearch 
-                    onSearch={setSearchQuery} 
-                    productImages={productImages} 
-                  />
+                  <div ref={heroSearchRef}>
+                    <ProductSearch 
+                      onSearch={setSearchQuery} 
+                      productImages={productImages} 
+                    />
+                  </div>
                 </motion.div>
 
                 {/* Right side - Custom Order CTA */}
@@ -286,14 +307,33 @@ const Products = () => {
                   </button>
                 ))}
               </div>
-              <ProductFilters
-                minPrice={minPrice}
-                maxPrice={maxPrice}
-                priceRange={priceRange}
-                onPriceRangeChange={setPriceRange}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
-              />
+              <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+                <ProductFilters
+                  minPrice={minPrice}
+                  maxPrice={maxPrice}
+                  priceRange={priceRange}
+                  onPriceRangeChange={setPriceRange}
+                  sortBy={sortBy}
+                  onSortChange={setSortBy}
+                />
+                
+                {/* Search bar moves here when scrolled */}
+                <motion.div
+                  initial={false}
+                  animate={{ 
+                    opacity: isSearchInHeader ? 1 : 0,
+                    scale: isSearchInHeader ? 1 : 0.95,
+                    width: isSearchInHeader ? "auto" : 0
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className={`${isSearchInHeader ? "block" : "hidden"} sm:min-w-[280px]`}
+                >
+                  <ProductSearch 
+                    onSearch={setSearchQuery} 
+                    productImages={productImages} 
+                  />
+                </motion.div>
+              </div>
             </div>
           </section>
 
@@ -343,12 +383,10 @@ const Products = () => {
                               size="sm"
                             />
                             {productImages[product.name] || product.image_url ? (
-                              <motion.img 
+                              <CachedProductImage
                                 src={productImages[product.name] || product.image_url || ''} 
                                 alt={product.name}
                                 className="w-full h-full object-cover"
-                                whileHover={{ scale: 1.08 }}
-                                transition={{ duration: 0.6, ease: "easeOut" }}
                               />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center">
