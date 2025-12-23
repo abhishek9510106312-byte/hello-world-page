@@ -41,55 +41,68 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Header */}
-      <header className="bg-background border-b border-border sticky top-0 z-40">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="font-serif text-2xl text-primary">Admin Dashboard</h1>
-          <div className="flex items-center gap-4">
-            <AdminNotifications />
-            <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-              View Site
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
-          </div>
+    <div className="min-h-screen bg-muted/30 flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-background border-r border-border sticky top-0 h-screen flex flex-col">
+        <div className="p-6 border-b border-border">
+          <h1 className="font-serif text-xl text-primary">Admin Dashboard</h1>
         </div>
-      </header>
-
-      <div className="container mx-auto px-6 py-8">
-        {/* Tab Navigation */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {tabs.map((tab) => (
-            <Button
+            <button
               key={tab.id}
-              variant={activeTab === tab.id ? 'default' : 'outline'}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'flex items-center gap-2',
-                activeTab === tab.id && 'bg-primary text-primary-foreground'
+                'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors',
+                activeTab === tab.id
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
             >
-              <tab.icon className="h-4 w-4" />
-              {tab.label}
-            </Button>
+              <tab.icon className="h-5 w-5" />
+              <span className="font-medium">{tab.label}</span>
+            </button>
           ))}
-        </div>
+        </nav>
 
-        {/* Tab Content */}
-        <div className="bg-background rounded-lg border border-border p-6">
-          {activeTab === 'overview' && <OverviewTab />}
-          {activeTab === 'products' && <AdminProducts />}
-          {activeTab === 'orders' && <AdminOrders />}
-          {activeTab === 'workshops' && <AdminWorkshops />}
-          {activeTab === 'experiences' && <AdminExperiences />}
-          {activeTab === 'custom-orders' && <AdminCustomOrders />}
-          {activeTab === 'corporate' && <AdminCorporateInquiries />}
-          {activeTab === 'testimonials' && <AdminVideoTestimonials />}
-          {activeTab === 'users' && <AdminUsers />}
+        <div className="p-4 border-t border-border space-y-2">
+          <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => navigate('/')}>
+            View Site
+          </Button>
+          <Button variant="outline" size="sm" className="w-full justify-start" onClick={handleSignOut}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
         </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="bg-background border-b border-border sticky top-0 z-40">
+          <div className="px-6 py-4 flex items-center justify-between">
+            <h2 className="font-serif text-xl text-foreground capitalize">
+              {activeTab === 'custom-orders' ? 'Custom Orders' : activeTab}
+            </h2>
+            <AdminNotifications />
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 p-6 overflow-auto">
+          <div className="bg-background rounded-lg border border-border p-6">
+            {activeTab === 'overview' && <OverviewTab />}
+            {activeTab === 'products' && <AdminProducts />}
+            {activeTab === 'orders' && <AdminOrders />}
+            {activeTab === 'workshops' && <AdminWorkshops />}
+            {activeTab === 'experiences' && <AdminExperiences />}
+            {activeTab === 'custom-orders' && <AdminCustomOrders />}
+            {activeTab === 'corporate' && <AdminCorporateInquiries />}
+            {activeTab === 'testimonials' && <AdminVideoTestimonials />}
+            {activeTab === 'users' && <AdminUsers />}
+          </div>
+        </main>
       </div>
     </div>
   );
