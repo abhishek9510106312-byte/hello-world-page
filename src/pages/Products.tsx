@@ -302,7 +302,7 @@ const Products = () => {
                     transition={{ delay: index * 0.03 }}
                     onClick={() => setActiveCategory(cat)}
                     className={`
-                      relative font-sans text-sm tracking-wide px-5 py-2.5 rounded-full 
+                      relative font-sans text-xs tracking-wide px-3 py-1.5 rounded-full 
                       transition-all duration-300 capitalize overflow-hidden
                       ${activeCategory === cat
                         ? "bg-primary text-primary-foreground shadow-warm"
