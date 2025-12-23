@@ -160,12 +160,12 @@ const Navigation = () => {
           duration: 0.4, 
           ease: [0.25, 0.1, 0.25, 1] 
         }}
-        className={`fixed z-50 inset-x-0 mx-auto transition-all max-w-5xl w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] rounded-full ${
+        className={`fixed z-50 inset-x-0 mx-auto max-w-5xl w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] rounded-full transition-[background-color,border-color,backdrop-filter,top] duration-500 ease-out ${
           scrolled
             ? "top-3 bg-parchment/90 backdrop-blur-md border border-border/40"
             : isHomePage
-            ? "top-6 bg-parchment/50 backdrop-blur-sm border border-border/20"
-            : "top-6 bg-parchment/70 backdrop-blur-sm border border-border/30"
+            ? "top-6 bg-parchment/50 backdrop-blur-[2px] border border-border/20"
+            : "top-6 bg-parchment/70 backdrop-blur-[4px] border border-border/30"
         }`}
         style={{
           // Extremely subtle shadow when scrolled, or none (craft-brand aesthetic)
