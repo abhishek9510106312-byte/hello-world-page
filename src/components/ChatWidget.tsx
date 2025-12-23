@@ -210,7 +210,10 @@ const ChatWidget = () => {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-cream/50 to-sand/20">
+            <div 
+              className="flex-1 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-cream/50 to-sand/20 overscroll-contain"
+              onWheel={(e) => e.stopPropagation()}
+            >
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
